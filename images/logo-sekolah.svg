@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-label="LOGO SEKOLAH">
+  <rect width="600" height="600" fill="#e7edf4"/>
+  <rect x="24" y="36" width="552" height="528" rx="18" fill="none" stroke="#9bafc2" stroke-width="3" stroke-dasharray="18 14"/>
+  <circle cx="300" cy="228" r="42" fill="#f6c95f"/>
+  <path d="M 180 372 L 258 288 L 312 342 L 384 258 L 438 372 Z" fill="#b9c8d7"/>
+  <text x="50%" y="78%" text-anchor="middle" font-family="Arial,sans-serif" font-size="39" font-weight="700" fill="#102f50">LOGO SEKOLAH</text>
+  <text x="50%" y="86%" text-anchor="middle" font-family="Arial,sans-serif" font-size="18" fill="#617083">600 × 600</text>
+</svg>

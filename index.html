@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Portal rasmi Sekolah Kebangsaan Minyak Beku, Batu Pahat, Johor.">
+  <title>Portal Rasmi SK Minyak Beku</title>
+  <link rel="icon" href="images/logo-sekolah.svg" type="image/svg+xml">
+
+  <style>
+    /* =========================================================
+       EDIT WARNA WEBSITE DI SINI
+       Tukar kod warna sahaja jika mahu ubah tema.
+    ========================================================= */
+    :root {
+      --biru-gelap: #102f50;
+      --biru: #1f5fae;
+      --biru-cerah: #eaf2fb;
+      --kuning: #f6c95f;
+      --putih: #ffffff;
+      --latar: #f5f7fa;
+      --teks: #172b40;
+      --teks-lembut: #617083;
+      --garis: #dbe3ec;
+      --bayang: 0 18px 50px rgba(16, 47, 80, 0.10);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--teks);
+      background: var(--latar);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+    }
+    img { display: block; width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    h1, h2, h3 { margin: 0; line-height: 1.18; }
+    p { margin: 0 0 1rem; }
+    .container { width: min(1180px, calc(100% - 40px)); margin: auto; }
+    .skip-link { position: fixed; left: -999px; top: 12px; z-index: 999; }
+    .skip-link:focus { left: 12px; padding: 10px 14px; background: white; border-radius: 8px; }
+
+    .announcement { background: var(--kuning); color: var(--biru-gelap); font-size: .9rem; font-weight: 700; }
+    .announcement .container { display: flex; justify-content: center; gap: 10px; padding: 8px 0; text-align: center; }
+    header { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,.96); border-bottom: 1px solid var(--garis); backdrop-filter: blur(10px); }
+    .navbar { min-height: 88px; display: flex; align-items: center; gap: 28px; }
+    .brand { display: flex; align-items: center; gap: 13px; margin-right: auto; }
+    .brand img { width: 56px; height: 56px; object-fit: contain; }
+    .brand strong { display: block; color: var(--biru-gelap); font-size: 1.05rem; }
+    .brand small { display: block; color: var(--teks-lembut); font-size: .76rem; letter-spacing: .08em; }
+    nav { display: flex; align-items: center; gap: 22px; }
+    nav a { color: var(--teks-lembut); font-size: .92rem; font-weight: 700; }
+    nav a:hover { color: var(--biru); }
+    .menu-button { display: none; border: 1px solid var(--garis); background: white; padding: 9px 12px; border-radius: 8px; cursor: pointer; }
+    .button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--biru-gelap); color: white; padding: 12px 18px; border-radius: 9px; font-weight: 700; }
+    .button:hover { background: var(--biru); }
+    .button.yellow { background: var(--kuning); color: var(--biru-gelap); }
+    .button.outline { background: transparent; border: 1px solid rgba(255,255,255,.45); color: white; }
+
+    .hero { padding: 42px 0 28px; }
+    .hero-box { border-radius: 24px; overflow:hidden; display:grid; grid-template-columns: 1fr; grid-template-rows: auto 340px; background: var(--biru-gelap); box-shadow: var(--bayang); }
+    .hero-copy { padding: clamp(28px, 5vw, 56px) clamp(28px, 5vw, 56px) clamp(20px, 3vw, 32px); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: white; }
+    .eyebrow { display: inline-block; color: var(--biru); font-size: .78rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 14px; }
+    .hero .eyebrow { color: var(--kuning); }
+    .hero h1 { font-size: clamp(2rem, 3.6vw, 3.1rem); letter-spacing: -.04em; margin-bottom: 6px; }
+    .hero h1 span { color: var(--kuning); }
+    .hero p { max-width: 600px; color: #d4e1ee; font-size: 1.05rem; }
+    hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; justify-content: center; }
+    .hero-image {position: relative;width: 100%;height: 100%; overflow: hidden;background: #dce7f2;}
+	  .hero-image img { width: 100%; height: 100%;object-fit: cover; object-position: center center;}
+    .image-label { position: absolute; bottom: 18px; left: 18px; right: 18px; padding: 12px 14px; background: rgba(16,47,80,.88); color: white; border-radius: 9px; font-size: .84rem; }
+
+    .quick-links { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin: 10px auto 70px; }
+    .quick-link { background: white; border: 1px solid var(--garis); border-radius: 14px; padding: 20px; display: flex; align-items: center; gap: 14px; transition: .2s ease; }
+    .quick-link:hover { transform: translateY(-3px); border-color: var(--biru); box-shadow: var(--bayang); }
+    .quick-icon { width: 44px; height: 44px; flex: 0 0 44px; display: grid; place-items: center; border-radius: 10px; background: var(--biru-cerah); color: var(--biru); font-weight: 900; }
+    .quick-link strong, .quick-link small { display: block; }
+    .quick-link small { color: var(--teks-lembut); font-size: .78rem; }
+
+    section { scroll-margin-top: 105px; }
+    .section { padding: 68px 0; }
+    .section.white { background: white; }
+    .section.dark { background: var(--biru-gelap); color: white; }
+    .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 25px; margin-bottom: 30px; }
+    .section-heading h2 { font-size: clamp(1.8rem, 3.5vw, 2.7rem); letter-spacing: -.035em; }
+    .section-heading p { max-width: 550px; color: var(--teks-lembut); margin: 0; }
+    .dark .section-heading p { color: #c7d7e7; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+    .card { background: white; border: 1px solid var(--garis); border-radius: 16px; overflow: hidden; }
+    .card-body { padding: 22px; }
+    .card h3 { margin-bottom: 10px; font-size: 1.12rem; }
+    .card p { color: var(--teks-lembut); font-size: .93rem; }
+    .card-image { aspect-ratio: 16 / 10; object-fit: cover; background: #e7edf4; }
+    .tag { display: inline-block; background: var(--biru-cerah); color: var(--biru); border-radius: 6px; padding: 4px 9px; font-size: .75rem; font-weight: 800; margin-bottom: 12px; }
+    .date { color: var(--teks-lembut); font-size: .8rem; }
+
+    .profile { text-align: center; padding: 22px; }
+    .profile img { width: 130px; height: 130px; border-radius: 50%; margin: 0 auto 17px; object-fit: cover; background: #e7edf4; }
+    .profile .role { color: var(--biru); font-size: .86rem; font-weight: 700; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #315170; border-radius: 16px; overflow: hidden; margin-top: 35px; }
+    .stat { padding: 25px; background: var(--biru-gelap); text-align: center; }
+    .stat strong { display: block; color: var(--kuning); font-size: 2rem; }
+    .stat span { color: #cfdfed; font-size: .86rem; }
+
+    .gallery { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: repeat(2, 210px); gap: 14px; }
+    .gallery figure { margin: 0; overflow: hidden; border-radius: 14px; position: relative; background: #e6edf5; }
+    .gallery figure:first-child { grid-row: 1 / 3; }
+    .gallery img { height: 100%; object-fit: cover; }
+    .gallery figcaption { position: absolute; inset: auto 12px 12px; padding: 8px 10px; border-radius: 7px; background: rgba(16,47,80,.84); color: white; font-size: .78rem; }
+
+    .contact-box { padding: 40px; background: white; color: var(--teks); border-radius: 18px; display: grid; grid-template-columns: 1.3fr .7fr; gap: 35px; }
+    .contact-list { display: grid; gap: 11px; margin-top: 22px; }
+    .contact-item { padding: 12px 0; border-bottom: 1px solid var(--garis); }
+    .placeholder-note { border: 1px dashed #aebdcb; background: #f8fafc; color: var(--teks-lembut); border-radius: 10px; padding: 15px; font-size: .86rem; }
+    footer { background: #0b233b; color: #c6d5e3; padding: 36px 0; }
+    .footer-grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 35px; }
+    footer strong { color: white; }
+    footer small { display: block; margin-top: 22px; color: #91a8bd; }
+
+    @media (max-width: 980px) {
+      .menu-button { display: block; }
+      nav { display: none; position: absolute; top: 88px; left: 0; right: 0; padding: 20px; background: white; border-bottom: 1px solid var(--garis); flex-direction: column; align-items: stretch; }
+      nav.open { display: flex; }
+      .hero-box { grid-template-columns: 1fr; height: auto; } 
+      .hero-image { min-height: 360px; }
+      .quick-links, .grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .grid-3 { grid-template-columns: repeat(2, 1fr); }
+      .contact-box { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .container { width: min(100% - 28px, 1180px); }
+      .announcement { font-size: .78rem; }
+      .brand small { display: none; }
+      .hero { padding-top: 20px; }
+      .hero-copy { padding: 34px 24px; }
+      .hero-image { min-height: 280px; }
+      .quick-links { grid-template-columns: 1fr 1fr; margin-bottom: 40px; }
+      .quick-link { padding: 14px; }
+      .grid-2, .grid-3, .grid-4, .stats, .footer-grid { grid-template-columns: 1fr; }
+      .section { padding: 48px 0; }
+      .section-heading { align-items: start; flex-direction: column; }
+      .gallery { grid-template-columns: 1fr 1fr; grid-template-rows: 270px 170px 170px; }
+      .gallery figure:first-child { grid-column: 1 / 3; grid-row: auto; }
+      .contact-box { padding: 25px; }
+    }
+  </style>
+</head>
+
+<body>
+  <a class="skip-link" href="#kandungan">Terus ke kandungan</a>
+
+  <!-- =========================================================
+       EDIT PENGUMUMAN RINGKAS DI SINI
+  ========================================================== -->
+  <div class="announcement">
+    <div class="container">📢 <span></span></div>
+  </div>
+
+  <header>
+    <div class="container navbar">
+      <!-- EDIT LOGO: gantikan images/logo-sekolah.svg dengan fail logo sekolah -->
+      <a class="brand" href="#utama" aria-label="Laman utama SK Minyak Beku">
+        <img src="images/Gemini_Generated_Image_pvlmsppvlmsppvlm-removebg-preview.png" alt="Logo SK Minyak Beku">
+        <span>
+          <strong>SK Minyak Beku</strong>
+          <small>BATU PAHAT · JOHOR</small>
+        </span>
+      </a>
+
+      <button class="menu-button" id="menuButton" aria-expanded="false" aria-controls="mainNav">☰ Menu</button>
+      <nav id="mainNav" aria-label="Menu utama">
+        <a href="#utama">Utama</a>
+        <a href="#sekolah">Sekolah</a>
+        <a href="#warga">Warga</a>
+        <a href="#berita">Berita</a>
+        <a href="#pencapaian">Pencapaian</a>
+        <a href="#galeri">Galeri</a>
+        <a href="#hubungi">Hubungi</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="kandungan">
+    <section class="hero" id="utama">
+      <div class="container hero-box">
+        <div class="hero-copy">
+          <span class="eyebrow">Selamat datang ke portal rasmi SK Minyak beku</span>
+          <!-- EDIT TAJUK DAN PENERANGAN UTAMA DI SINI -->
+          <center><h1>Bersama Membina<span> Legasi Kecemerlangan</span> <br> #SKMBHEBAT!</h1></center>
+          <center><div class="hero-actions">
+            <a class="button yellow" href="#berita">Berita terkini</a>
+            <a class="button outline" href="#sekolah">Kenali sekolah</a>
+          </div></center>
+        </div>
+        <div class="hero-image">
+          <!-- EDIT GAMBAR UTAMA: gantikan fail images/gambar-utama.svg -->
+          <img src="images/VASD4204.jpg" alt="Placeholder gambar utama sekolah">
+        </div>
+      </div>
+    </section>
+
+    <!-- EDIT PAUTAN PANTAS: tukar nilai href kepada URL rasmi -->
+    <div class="container quick-links" aria-label="Pautan pantas">
+      <a class="quick-link" href="https://idme.moe.gov.my/" target="_blank" rel="noopener">
+        <span class="quick-icon">i</span><span><strong>idMe</strong><small>Sistem IDME ↗</small></span>
+      </a>
+      <a class="quick-link" href="https://sso.edujohor.com/3q6t5t" target="_blank" rel="noopener">
+        <span class="quick-icon">D</span><span><strong>DELIMa</strong><small>Portal Delima↗</small></span>
+      </a>
+      <a class="quick-link" href="https://hrmis2.eghrmis.gov.my/" target="_blank" rel="noopener">
+        <span class="quick-icon">H</span><span><strong>HRMIS</strong><small>Sistem HRMIS↗</small></span>
+      </a>
+	  <a class="quick-link" href="https://appsjohor.moe.gov.my/rmt/" target="_blank" rel="noopener">
+        <span class="quick-icon">H</span><span><strong>RMT</strong><small>Laporan RMT↗</small></span>
+      </a>
+      <a class="quick-link" href="#" title="Aktifkan pautan pada fasa sistem dalaman">
+        <span class="quick-icon">S</span><span><strong>Sistem SKMB</strong><small>Fasa seterusnya</small></span>
+      </a>
+    </div>
+
+    <section class="section white" id="sekolah">
+      <div class="container">
+        <div class="section-heading">
+          <div><span class="eyebrow">Tentang kami</span><h2>Kenali SK Minyak Beku</h2></div>
+        </div>
+        <div class="grid-2">
+          <article class="card">
+            <!-- EDIT GAMBAR SEKOLAH -->
+            <img class="card-image" src="images/VASD4215.jpg" alt="Placeholder gambar bangunan sekolah">
+            <div class="card-body">
+              <span class="tag">Profil sekolah</span>
+              <h3>Sekolah Kebangsaan Minyak Beku</h3>
+              <p>Sekolah Kebangsaan Minyak Beku ditubuhkan pada tahun 1909 di atas tanah wakaf En. Asrakal Bin Ismail, bermula di Bangunan Kelab Bola Sepak Melayu Kampung Teluk Buloh untuk 60 orang murid sebelum bangunan kayu baharu dibina secara gotong-royong pada tahun 1913. Seterusnya, Kerajaan Negeri Johor membina bangunan "rumah panggung" bertiang batu pada tahun 1918 bagi Sekolah Melayu Perempuan Minyak Beku, diikuti pembinaan bangunan serupa untuk Sekolah Melayu Laki-Laki Minyak Beku bersama rumah guru pada tahun 1932. Akhirnya, bangunan pasang siap tiga tingkat yang mengandungi enam bilik darjah, pejabat, perpustakaan, bilik tayang, dan kantin telah dibina pada 28 November 1984 dan diguna pakai sehingga kini.</p>
+            </div>
+          </article>
+          <div class="grid-2">
+            <article class="card"><div class="card-body"><span class="tag">Visi</span><h3>Visi sekolah</h3><p>Pendidikan Bermutu, Insan Terdidik, Negara Sejahtera.</p></div></article>
+            <article class="card"><div class="card-body"><span class="tag">Misi</span><h3>Misi sekolah</h3><p>Melestarikan sistem pendidikan yang bermutu untuk membangunkan potensi individu bagi memenuhi aspirasi negara </p></div></article>
+            <article class="card"><div class="card-body"><span class="tag">Moto</span><h3>Moto sekolah</h3><p>Bersama Membina Legasi Kecemerlangan, #SKMBHEBAT !</p></div></article>
+            <article class="card"><div class="card-body"><span class="tag">Haluan</span><h3>Fokus sekolah</h3><p>Memastikan penguasaan asas 3M (Membaca, Menulis, Mengira) serta meningkatkan pencapaian Pentaksiran Bilik Darjah (PBD) secara berterusan.</p></div></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section dark" aria-label="Statistik sekolah">
+      <div class="container">
+        <div class="section-heading">
+          <div><span class="eyebrow">SKMB dalam angka</span><h2>Komuniti sekolah</h2></div>
+        </div>
+        <div class="stats">
+          <div class="stat"><strong>115</strong><span>Jumlah murid</span></div>
+          <div class="stat"><strong>15</strong><span>Guru</span></div>
+          <div class="stat"><strong>3</strong><span>Staf sokongan</span></div>
+          <div class="stat"><strong>7</strong><span>Kelas</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="warga">
+      <div class="container">
+        <div class="section-heading">
+          <div><span class="eyebrow">Warga sekolah</span><h2>Barisan pentadbir</h2></div>
+        </div>
+        <div class="grid-4">
+          <!-- EDIT KAD GURU 1 -->
+          <article class="card profile"><img src="images/guru-1.svg" alt="Placeholder foto Guru Besar"><h3>MOHD NOOR HAFIZ BIN ZAKARIA</h3><div class="role">Guru Besar</div></article>
+          <!-- EDIT KAD GURU 2 -->
+          <article class="card profile"><img src="images/VASD1620.jpg" alt="Placeholder foto PK Pentadbiran"><h3>IDA RINA BINTI MD SHUKOR</h3><div class="role">Guru Penolong Kanan Pentadbiran</div></article>
+          <!-- EDIT KAD GURU 3 -->
+          <article class="card profile"><img src="images/VASD1600.jpg" alt="Placeholder foto PK HEM"><h3>NOOR AZAM BIN MOHD ADI</h3><div class="role">Guru Penolong Kanan Hal Ehwal Murid</div></article>
+          <!-- EDIT KAD GURU 4 -->
+          <article class="card profile"><img src="images/Laman Web TS25 SK Minyak Beku.png" alt="Placeholder foto PK Kokurikulum"><h3>ASBANIZAM BIN SAMSURI</h3><div class="role">Guru Penolong Kanan Kokurikulum</div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section white" id="berita">
+      <div class="container">
+        <div class="section-heading">
+          <div><span class="eyebrow">Perkembangan sekolah</span><h2>Berita dan aktiviti</h2></div>
+        </div>
+        <div class="grid-3">
+          <!-- EDIT BERITA 1 -->
+          <article class="card"><img class="card-image" src="images/776222632_1400688578884894_6958131288948762604_n.jpg" alt="Placeholder berita pertama"><div class="card-body"><span class="tag">Aktiviti</span><h3>AKTIVITI BULAN KEMERDEKAAN</h3><p>Menu juadah berbilang bangsa di Malaysia</p><span class="date">18 Ogos 2026</span></div></article>
+          <!-- EDIT BERITA 2 -->
+          <article class="card"><img class="card-image" src="images/762903570_1387575713529514_4378673042317026036_n.jpg" alt="Placeholder berita kedua"><div class="card-body"><span class="tag">Aktiviti</span><h3>PELANCARAN BULAN KEMERDEKAAN</h3><p>Majlis Pelancaran Bulan Kemerdekaan Tahun 2026.</p><span class="date">13 Ogos 2026</span></div></article>
+          <!-- EDIT BERITA 3 -->
+          <article class="card"><img class="card-image" src="images/761764791_1385920350361717_773208195221221412_n.jpg" alt="Placeholder berita ketiga"><div class="card-body"><span class="tag">Sekolah</span><h3>PENYAMPAIAN ANUGERAH IMELC</h3><p>Majlis Penyampaian Anugerah IMELC kepada Top 5 Sekolah terbaik di Daerah Batu Pahat</p><span class="date">01 Ogos 2026</span></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="pencapaian">
+      <div class="container">
+        <div class="section-heading">
+          <div><span class="eyebrow">Kebanggaan SKMB</span><h2>Pencapaian sekolah</h2></div>
+        </div>
+        <div class="grid-3">
+          <article class="card"><img class="card-image" src="images/765997601_2009388976675325_5718775134038367367_n.jpg" alt="Placeholder pencapaian pertama"><div class="card-body"><span class="tag">Peringkat Negeri</span><h3>ISKANDAR MALAYSIA ECLOLIFE CHALLENGE (IMELC) 2026 </h3><p>Top 5 Anugerah Penghargaan Iskandar Malaysia Ecolife Challenge (IMELC) 2026</p></div></article>
+          <article class="card"><img class="card-image" src="images/757969617_1383337383953347_8480592905978132260_n.jpg" alt="Placeholder pencapaian kedua"><div class="card-body"><span class="tag">Peringkat Kebangsaan</span><h3>HAFAZAN AL-QURAN KAFOA 2026</h3><p>Durratun Aziff Ismail bin Samsudin telah mendapat Naib Johan dalam Pertandingan Hafazan Al-Quran Karnival Fitrah Murid Orang Asli Peringkat Kebangsaan 2026.</p></div></article>
+          <article class="card"><img class="card-image" src="images/5a589660-dafc-4708-a6fc-891a94f2417f.jpg" alt="Placeholder pencapaian ketiga"><div class="card-body"><span class="tag">Peringkat Daerah</span><h3>Pertandingan Tiktok PPI </h3><p>Hanie Umairah dan Husna telah mendapat Top 5 dalam pertandingan menghasilkan video Tiktok PPI peringkat Daerah Batu Pahat.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section white" id="galeri">
+      <div class="container">
+        <div class="section-heading">
+          <div><span class="eyebrow">Lensa SKMB</span><h2>Galeri sekolah</h2></div>
+        </div>
+        <div class="gallery">
+          <figure><img src="images/VASD1696.jpg" alt="Placeholder galeri utama"><figcaption>PDPC di dalam kelas</figcaption></figure>
+          <figure><img src="images/VASD1689.jpg" alt="Placeholder galeri kedua"><figcaption>PDPC di dalam kelas</figcaption></figure>
+          <figure><img src="images/764881036_1389487080005044_81950361554856261_n.jpg" alt="Placeholder galeri ketiga"><figcaption>Aktiviti Sekolah</figcaption></figure>
+          <figure><img src="images/757994102_1383494683937617_6197739847659715586_n.jpg" alt="Placeholder galeri keempat"><figcaption>Program Agensi Luar</figcaption></figure>
+          <figure><img src="images/668574161_1291238443163242_4583461178215184514_n.jpg" alt="Placeholder galeri kelima"><figcaption>Lawatan Sambil Belajar</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section dark" id="hubungi">
+      <div class="container contact-box">
+        <div>
+          <span class="eyebrow">Hubungi sekolah</span>
+          <h2>SK Minyak Beku</h2>
+          <div class="contact-list">
+            <!-- EDIT MAKLUMAT HUBUNGAN DI SINI -->
+            <div class="contact-item"><strong>Alamat</strong><br>SK Minyak Beku,Kampung Minyak Beku,83030 Batu Pahat, Johor</div>
+            <div class="contact-item"><strong>Telefon</strong><br>07-4287805</div>
+            <div class="contact-item"><strong>E-mel</strong><br>sekolah-4262@moe-dl.edu.my</div>
+            <div class="contact-item"><strong>Waktu pejabat</strong><br>Isnin–Jumaat, 8.00 pagi–5.00 petang</div>
+          </div>
+        </div>
+        <div>
+          <h3>Aduan dan maklum balas</h3>
+          <div class="placeholder-note">Ibu Bapa dan Komuniti boleh mengajukan cadangan,maklumbalas ataupun aduan berkaitan sekolah melalui pautan di bawah.</div>
+          <!-- EDIT PAUTAN BORANG: gantikan # dengan URL Google Form -->
+          <a class="button" style="margin-top:16px" href="#">Buka borang maklum balas ↗</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div><strong>Sekolah Kebangsaan Minyak Beku</strong><p>Bersama Membina Legasi Kecemerlangan, #SKMBHEBAT!</p></div>
+      <div><strong>Pautan</strong><p><a href="#sekolah">Profil sekolah</a> · <a href="#berita">Berita</a> · <a href="#hubungi">Hubungi</a></p></div>
+    </div>
+    <div class="container"><small>© <span id="tahun"></span> SK Minyak Beku. Hak cipta terpelihara.</small></div>
+  </footer>
+
+  <script>
+    // JavaScript ringkas untuk menu telefon dan tahun semasa.
+    const menuButton = document.getElementById('menuButton');
+    const mainNav = document.getElementById('mainNav');
+    menuButton.addEventListener('click', () => {
+      const isOpen = mainNav.classList.toggle('open');
+      menuButton.setAttribute('aria-expanded', String(isOpen));
+    });
+    mainNav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+      mainNav.classList.remove('open');
+      menuButton.setAttribute('aria-expanded', 'false');
+    }));
+    document.getElementById('tahun').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

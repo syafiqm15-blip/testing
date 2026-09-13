@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="GALERI 2">
+  <rect width="1200" height="800" fill="#e7edf4"/>
+  <rect x="48" y="48" width="1104" height="704" rx="24" fill="none" stroke="#9bafc2" stroke-width="5" stroke-dasharray="18 14"/>
+  <circle cx="600" cy="304" r="56" fill="#f6c95f"/>
+  <path d="M 360 496 L 516 384 L 624 456 L 768 344 L 876 496 Z" fill="#b9c8d7"/>
+  <text x="50%" y="78%" text-anchor="middle" font-family="Arial,sans-serif" font-size="52" font-weight="700" fill="#102f50">GALERI 2</text>
+  <text x="50%" y="86%" text-anchor="middle" font-family="Arial,sans-serif" font-size="23" fill="#617083">1200 × 800</text>
+</svg>

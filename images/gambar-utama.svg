@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" role="img" aria-label="GAMBAR UTAMA">
+  <rect width="1600" height="1200" fill="#e7edf4"/>
+  <rect x="64" y="72" width="1472" height="1056" rx="36" fill="none" stroke="#9bafc2" stroke-width="6" stroke-dasharray="18 14"/>
+  <circle cx="800" cy="456" r="84" fill="#f6c95f"/>
+  <path d="M 480 744 L 688 576 L 832 684 L 1024 516 L 1168 744 Z" fill="#b9c8d7"/>
+  <text x="50%" y="78%" text-anchor="middle" font-family="Arial,sans-serif" font-size="78" font-weight="700" fill="#102f50">GAMBAR UTAMA</text>
+  <text x="50%" y="86%" text-anchor="middle" font-family="Arial,sans-serif" font-size="35" fill="#617083">1600 × 1200</text>
+</svg>
