@@ -42,3 +42,16 @@ Lihat kod yang terhasil melalui **Execution log**, kemudian berikan kod tersebut
 ## Nota keselamatan
 
 Kod sumber dalam repositori ini bersifat public. Jangan masukkan ID Google Sheet, kata laluan, token pembayaran atau data pembeli ke dalam fail GitHub. ID Sheet disimpan dalam Script Properties oleh `setupDatabase()`.
+
+
+## Kemas kini Visual V2
+
+- NPC sekolah ditukar kepada Cikgu Shafiq.
+- Tiga stesen berurutan: Sekolah, Perpustakaan dan Kedai Ceria.
+- Stesen seterusnya hanya aktif selepas misi semasa selesai.
+- Avatar mempunyai muka, tangan dan animasi berjalan.
+- Kamera boleh dipusing menggunakan seretan tetikus atau sentuhan.
+- Bangunan mempunyai bumbung, pintu, tingkap, laluan dan hiasan bandar.
+- Kemajuan stesen disimpan di lajur STESEN.
+
+Jika menaik taraf daripada V1, salin semula kedua-dua fail `Code.gs` dan `Index.html`, jalankan `setupDatabase()` sekali lagi, kemudian pilih **Deploy > Manage deployments > Edit > New version > Deploy**.
