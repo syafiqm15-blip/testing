@@ -55,3 +55,10 @@ Kod sumber dalam repositori ini bersifat public. Jangan masukkan ID Google Sheet
 - Kemajuan stesen disimpan di lajur STESEN.
 
 Jika menaik taraf daripada V1, salin semula kedua-dua fail `Code.gs` dan `Index.html`, jalankan `setupDatabase()` sekali lagi, kemudian pilih **Deploy > Manage deployments > Edit > New version > Deploy**.
+
+
+## Mod Akses Awam
+
+Versi prototaip kini tidak memerlukan kod lesen. Pemain hanya memasukkan nama. Nama, ID peranti tanpa nama asal, masa log masuk dan kemajuan disimpan dalam tab `PEMAIN` serta `KEMAJUAN`.
+
+Selepas menyalin fail terkini, jalankan `setupDatabase()` sekali untuk mencipta tab `PEMAIN`, kemudian deploy sebagai versi baharu. Sistem lesen lama masih dikekalkan dalam `Code.gs` untuk kegunaan komersial pada masa hadapan.
