@@ -1,163 +1,39 @@
-<!doctype html>
-<html lang="ms">
-<head>
-  <meta charset="utf-8">
-  <style>
-    :root{--purple:#5b4bdb;--yellow:#ffd43b;--green:#22c55e;--ink:#20223b}
-    *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Nunito,system-ui,sans-serif;background:#8ed8ff;color:var(--ink);touch-action:none}
-    button,input{font:inherit}button{border:0;cursor:pointer}
-    #game{position:fixed;inset:0}canvas{display:block}
-    .screen{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:linear-gradient(155deg,#81d8ff,#bda9ff 55%,#ffe17a)}
-    .card{width:min(92vw,460px);background:#fff;border:5px solid #fff;border-radius:30px;padding:28px;box-shadow:0 24px 70px #312e8170;text-align:center}
-    .logo{font-size:54px}.card h1{font-size:clamp(27px,7vw,40px);margin:4px 0;color:var(--purple)}.card p{line-height:1.5;color:#62657d}
-    .license{width:100%;padding:15px 18px;border:3px solid #dedcfb;border-radius:16px;text-align:center;text-transform:uppercase;font-weight:900;outline:none}
-    .primary{width:100%;margin-top:13px;padding:15px;border-radius:16px;background:linear-gradient(135deg,var(--purple),#816ff2);color:#fff;font-weight:900;box-shadow:0 8px 0 #4031ab}
-    .primary:active{transform:translateY(5px);box-shadow:0 3px 0 #4031ab}.tiny{font-size:12px}.error{min-height:20px;color:#dc2626;font-weight:800}
-    .hidden{display:none!important}
-    #hud{position:fixed;z-index:10;inset:14px 14px auto;display:flex;gap:10px;justify-content:space-between;pointer-events:none}
-    .hudGroup{display:flex;gap:8px}.pill{background:#ffffffed;padding:10px 15px;border-radius:18px;border:3px solid #fff;box-shadow:0 5px 15px #29305635;font-weight:900}
-    #quest{position:fixed;z-index:10;top:75px;left:14px;width:min(330px,calc(100vw - 28px));background:#292542e8;color:#fff;padding:14px 17px;border-radius:18px;pointer-events:none}
-    #quest b{color:#ffe45b}#questBar{height:8px;background:#ffffff25;border-radius:8px;margin-top:9px;overflow:hidden}#questFill{height:100%;width:0;background:#35e28c;transition:.4s}
-    #interact{position:fixed;z-index:12;left:50%;bottom:28px;transform:translateX(-50%);padding:14px 23px;border-radius:22px;background:var(--yellow);font-weight:1000;box-shadow:0 7px 0 #c69e00;display:none}
-    #hint{position:fixed;z-index:9;bottom:16px;left:16px;background:#ffffffd9;padding:8px 12px;border-radius:12px;font-size:13px;font-weight:800}
-    #joystick{display:none;position:fixed;z-index:12;left:22px;bottom:26px;width:112px;height:112px;border-radius:50%;background:#ffffff55;border:3px solid #ffffff88}
-    #stick{position:absolute;width:48px;height:48px;left:29px;top:29px;border-radius:50%;background:#5b4bdbaa;border:3px solid #fff}
-    .modal{position:fixed;z-index:40;inset:0;display:grid;place-items:center;background:#211d4388;padding:16px}
-    .dialog{width:min(94vw,600px);background:#fff;border-radius:28px;padding:24px;box-shadow:0 20px 80px #11182788;text-align:center}
-    .npcFace{font-size:60px}.dialog h2{margin:3px;color:var(--purple)}.speech{background:#f1efff;border-radius:17px;padding:13px;margin:14px 0;font-weight:700}
-    .answers{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.answer{padding:15px 8px;border-radius:17px;background:#f4f3fb;border:3px solid #e4e1f5;font-size:18px;font-weight:1000}.answer:hover{border-color:var(--purple);background:#ebe8ff}
-    .picture{font-size:88px;margin:6px}.result{min-height:25px;font-weight:900}.good{color:#059669}.bad{color:#dc2626}
-    #toast{position:fixed;z-index:60;top:20px;left:50%;transform:translate(-50%,-120px);background:#20223b;color:#fff;padding:14px 20px;border-radius:16px;font-weight:900;transition:.35s}
-    #toast.show{transform:translate(-50%,0)}
-    @media(max-width:700px){#hint{display:none}#joystick{display:block}#interact{left:auto;right:22px;transform:none;bottom:45px}.answers{grid-template-columns:1fr}.answer{padding:12px}.picture{font-size:65px}}
-  </style>
-</head>
-<body>
-<div id="game"></div>
-<section id="login" class="screen">
-  <div class="card"><div class="logo">🏫✨</div><h1>Bandar Ceria</h1><h3>Misi Bahasa Melayu</h3>
-    <p>Teroka bandar, jumpa Cikgu Aina dan kumpulkan Bintang Bahasa!</p>
-    <input id="license" class="license" value="DEMO-BAHASA" placeholder="KOD LESEN">
-    <button id="loginBtn" class="primary">MULA BERMAIN</button>
-    <p id="loginError" class="error"></p><p class="tiny">Versi prototaip Fasa 1</p>
-  </div>
-</section>
-<div id="hud" class="hidden"><div class="hudGroup"><div class="pill">⭐ <span id="xp">0</span> XP</div><div class="pill">🪙 <span id="coins">0</span></div></div><div class="pill">👤 <span id="buyer">Pemain</span></div></div>
-<div id="quest" class="hidden"><b>MISI UTAMA</b><div id="questText">Cari Cikgu Aina di hadapan sekolah.</div><div id="questBar"><div id="questFill"></div></div></div>
-<button id="interact">💬 CAKAP</button>
-<div id="hint" class="hidden">WASD / anak panah untuk bergerak • E untuk bercakap</div>
-<div id="joystick" class="hidden"><div id="stick"></div></div>
-<div id="mission" class="modal hidden">
-  <div class="dialog"><div class="npcFace">👩‍🏫</div><h2>Cikgu Aina</h2><div id="speech" class="speech"></div>
-    <div id="quiz" class="hidden"><div id="counter"></div><div id="picture" class="picture"></div><div>Pilih perkataan yang betul.</div><div id="answers" class="answers"></div><div id="result" class="result"></div></div>
-    <button id="continueBtn" class="primary">TERUSKAN</button>
-  </div>
-</div>
-<div id="toast"></div>
-<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-<script>
-const $=id=>document.getElementById(id);
-const state={token:'',xp:0,coins:0,completed:false,correct:0,q:0,near:false,missionStarted:false};
-let scene,camera,renderer,player,npc,clock,walkTime=0;
-const keys={},move={x:0,y:0};
-const questions=[
-  {emoji:'🐱',correct:'KUCING',choices:['KUCING','BURUNG','IKAN']},
-  {emoji:'🚌',correct:'BAS',choices:['BOLA','BAS','BUKU']},
-  {emoji:'🏠',correct:'RUMAH',choices:['RUMAH','SEKOLAH','KEDAI']}
-];
-
-function deviceId(){
-  let id=localStorage.getItem('bc_device');
-  if(!id){id='dev-'+crypto.randomUUID();localStorage.setItem('bc_device',id)} return id;
-}
-$('loginBtn').onclick=()=>{
-  const code=$('license').value.trim(); $('loginBtn').disabled=true;$('loginBtn').textContent='MEMERIKSA...';$('loginError').textContent='';
-  google.script.run.withSuccessHandler(startGame).withFailureHandler(e=>{
-    $('loginError').textContent=e.message||'Tidak dapat menyambung.';$('loginBtn').disabled=false;$('loginBtn').textContent='MULA BERMAIN';
-  }).verifyLicense(code,deviceId());
-};
-function startGame(res){
-  if(!res.ok){$('loginError').textContent=res.message;$('loginBtn').disabled=false;$('loginBtn').textContent='MULA BERMAIN';return}
-  state.token=res.token;Object.assign(state,res.progress||{});$('buyer').textContent=res.buyer||'Pemain';updateHud();
-  $('login').classList.add('hidden');$('hud').classList.remove('hidden');$('quest').classList.remove('hidden');$('hint').classList.remove('hidden');$('joystick').classList.remove('hidden');
-  init3D(); if(state.completed){$('questText').textContent='Misi selesai! Jelajah Bandar Ceria.';$('questFill').style.width='100%'}
-}
-function updateHud(){$('xp').textContent=state.xp;$('coins').textContent=state.coins}
-function box(w,h,d,color,x,y,z){
-  const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color}));
-  m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;scene.add(m);return m;
-}
-function sign(text,x,z,color='#fff'){
-  const c=document.createElement('canvas');c.width=512;c.height=128;const ctx=c.getContext('2d');ctx.fillStyle=color;ctx.roundRect(4,4,504,120,25);ctx.fill();ctx.fillStyle='#312e81';ctx.font='bold 52px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,256,66);
-  const s=new THREE.Mesh(new THREE.PlaneGeometry(5,1.25),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),transparent:true}));s.position.set(x,4.4,z);scene.add(s);
-}
-function tree(x,z){box(.7,3,.7,0x8b5a2b,x,1.5,z);const crown=new THREE.Mesh(new THREE.SphereGeometry(1.65,12,10),new THREE.MeshStandardMaterial({color:0x36b75e}));crown.position.set(x,3.5,z);crown.castShadow=true;scene.add(crown)}
-function building(x,z,w,d,color,label){
-  box(w,3.8,d,color,x,1.9,z);box(w+.25,.35,d+.25,0xffffff,x,3.95,z);box(1.5,2.3,.15,0x70452d,x,1.15,z-d/2-.08);
-  for(let i=-1;i<=1;i+=2) box(1.1,1.1,.12,0xaee8ff,x+i*w*.28,2.3,z-d/2-.1);
-  sign(label,x,z-d/2-.2);
-}
-function makeCharacter(){
-  const g=new THREE.Group();const skin=0xf3b47c, shirt=0x6558e8;
-  const head=new THREE.Mesh(new THREE.BoxGeometry(1,1,1),new THREE.MeshStandardMaterial({color:skin}));head.position.y=2.65;g.add(head);
-  const hair=new THREE.Mesh(new THREE.BoxGeometry(1.04,.3,1.04),new THREE.MeshStandardMaterial({color:0x3b261a}));hair.position.y=3.18;g.add(hair);
-  const body=new THREE.Mesh(new THREE.BoxGeometry(1.15,1.3,.65),new THREE.MeshStandardMaterial({color:shirt}));body.position.y=1.55;g.add(body);
-  const l1=boxPart(.4,1.25,.45,0x293867,-.32,.62,0),l2=boxPart(.4,1.25,.45,0x293867,.32,.62,0);g.add(l1,l2);g.userData.legs=[l1,l2];return g;
-}
-function boxPart(w,h,d,color,x,y,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color}));m.position.set(x,y,z);m.castShadow=true;return m}
-function makeNpc(){
-  const g=new THREE.Group();g.add(boxPart(1,1,1,0xeab38a,0,2.7,0),boxPart(1.2,1.4,.7,0xff6b9b,0,1.55,0),boxPart(.42,1.2,.5,0x4d3c7a,-.3,.55,0),boxPart(.42,1.2,.5,0x4d3c7a,.3,.55,0));
-  const marker=new THREE.Mesh(new THREE.SphereGeometry(.28,12,12),new THREE.MeshBasicMaterial({color:0xffdf35}));marker.position.y=4;g.add(marker);g.position.set(0,0,-7);scene.add(g);return g;
-}
-function init3D(){
-  scene=new THREE.Scene();scene.background=new THREE.Color(0x8ed8ff);scene.fog=new THREE.Fog(0x8ed8ff,35,75);
-  camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,150);renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.shadowMap.enabled=true;$('game').appendChild(renderer.domElement);
-  scene.add(new THREE.HemisphereLight(0xffffff,0x70a85c,2));const sun=new THREE.DirectionalLight(0xffffff,2.3);sun.position.set(15,25,10);sun.castShadow=true;scene.add(sun);
-  box(55,.4,55,0x79c95a,0,-.2,0);box(8,.08,55,0xe9d7ae,0,.05,0);box(55,.08,7,0xd8d6df,0,.09,8);
-  building(0,-13,12,7,0xffd85b,'SEKOLAH');building(-15,1,9,7,0xff8f70,'KEDAI');building(15,1,9,7,0x8b78e6,'PERPUSTAKAAN');
-  [[-10,-9],[10,-9],[-20,-10],[20,-10],[-10,15],[10,15],[-22,18],[22,18]].forEach(p=>tree(...p));
-  player=makeCharacter();player.position.set(0,0,14);scene.add(player);npc=makeNpc();clock=new THREE.Clock();
-  camera.position.set(0,8,22);addEvents();animate();
-}
-function addEvents(){
-  onkeydown=e=>{keys[e.key.toLowerCase()]=true;if(e.key.toLowerCase()==='e')interact()};onkeyup=e=>keys[e.key.toLowerCase()]=false;
-  onresize=()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)};
-  const joy=$('joystick'),stick=$('stick');let active=false;
-  const setJoy=e=>{const r=joy.getBoundingClientRect(),t=e.touches?e.touches[0]:e;let x=t.clientX-(r.left+r.width/2),y=t.clientY-(r.top+r.height/2);const len=Math.hypot(x,y),max=38;if(len>max){x=x/len*max;y=y/len*max}move.x=x/max;move.y=y/max;stick.style.transform='translate('+x+'px,'+y+'px)'};
-  joy.onpointerdown=e=>{active=true;joy.setPointerCapture(e.pointerId);setJoy(e)};joy.onpointermove=e=>{if(active)setJoy(e)};joy.onpointerup=()=>{active=false;move.x=move.y=0;stick.style.transform=''};
-  $('interact').onclick=interact;
-}
-function animate(){
-  requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04);let x=move.x,y=move.y;
-  if(keys.w||keys.arrowup)y=-1;if(keys.s||keys.arrowdown)y=1;if(keys.a||keys.arrowleft)x=-1;if(keys.d||keys.arrowright)x=1;
-  const len=Math.hypot(x,y);if(len>.1){x/=len;y/=len;player.position.x+=x*7*dt;player.position.z+=y*7*dt;player.position.x=Math.max(-25,Math.min(25,player.position.x));player.position.z=Math.max(-25,Math.min(25,player.position.z));player.rotation.y=Math.atan2(x,y);walkTime+=dt*10;player.userData.legs[0].rotation.x=Math.sin(walkTime)*.55;player.userData.legs[1].rotation.x=-Math.sin(walkTime)*.55}else player.userData.legs.forEach(l=>l.rotation.x*=.8);
-  const target=new THREE.Vector3(player.position.x,player.position.y+6,player.position.z+9);camera.position.lerp(target,.08);camera.lookAt(player.position.x,1.4,player.position.z);
-  state.near=player.position.distanceTo(npc.position)<4&&!state.completed;$('interact').style.display=state.near?'block':'none';renderer.render(scene,camera);
-}
-function interact(){if(state.near&&!state.missionStarted)openIntro()}
-function openIntro(){
-  state.missionStarted=true;$('mission').classList.remove('hidden');$('speech').textContent='Hai! Cikgu kehilangan tiga Bintang Bahasa. Bantu cikgu memilih perkataan yang sepadan dengan gambar.';$('quiz').classList.add('hidden');$('continueBtn').classList.remove('hidden');speak($('speech').textContent);
-}
-$('continueBtn').onclick=()=>{state.q=0;state.correct=0;$('continueBtn').classList.add('hidden');$('quiz').classList.remove('hidden');showQuestion()};
-function showQuestion(){
-  const q=questions[state.q];$('counter').textContent='Soalan '+(state.q+1)+' daripada '+questions.length;$('picture').textContent=q.emoji;$('result').textContent='';$('answers').innerHTML='';
-  [...q.choices].sort(()=>Math.random()-.5).forEach(word=>{const b=document.createElement('button');b.className='answer';b.textContent=word;b.onclick=()=>answer(word,b);$('answers').appendChild(b)});speak('Pilih perkataan yang betul.');
-}
-function answer(word,button){
-  document.querySelectorAll('.answer').forEach(b=>b.disabled=true);const q=questions[state.q],ok=word===q.correct;
-  if(ok){state.correct++;button.style.background='#bbf7d0';$('result').textContent='Betul! Hebat!';$('result').className='result good';speak('Betul! Hebat!')}else{button.style.background='#fecaca';$('result').textContent='Jawapan yang betul ialah '+q.correct+'.';$('result').className='result bad';speak('Jawapan yang betul ialah '+q.correct)}
-  setTimeout(()=>{state.q++;if(state.q<questions.length)showQuestion();else finishMission()},1300);
-}
-function finishMission(){
-  const earned=state.correct*10;state.xp+=earned;state.coins+=state.correct*5;state.completed=true;updateHud();$('questText').textContent='Misi Bahasa Melayu selesai!';$('questFill').style.width='100%';
-  $('quiz').innerHTML='<div class="picture">🏆</div><h2>Misi Selesai!</h2><p>Betul '+state.correct+' daripada 3</p><h3>+'+earned+' XP &nbsp; 🪙 +'+(state.correct*5)+'</h3><button class="primary" onclick="closeMission()">KEMBALI KE BANDAR</button>';
-  google.script.run.withFailureHandler(e=>toast('Kemajuan belum disimpan')).saveProgress(state.token,{xp:state.xp,coins:state.coins,completed:true,correct:state.correct});
-  confetti();speak('Tahniah! Misi Bahasa Melayu selesai.');
-}
-function closeMission(){$('mission').classList.add('hidden');$('interact').style.display='none';toast('Bintang Bahasa diperoleh! ⭐')}
-function speak(text){if('speechSynthesis'in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='ms-MY';u.rate=.9;speechSynthesis.speak(u)}}
-function toast(t){$('toast').textContent=t;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2600)}
-function confetti(){for(let i=0;i<35;i++){const e=document.createElement('i');e.textContent=['⭐','🎉','✨'][i%3];e.style.cssText='position:fixed;z-index:70;left:'+Math.random()*100+'vw;top:-30px;font-style:normal;font-size:'+(18+Math.random()*20)+'px;transition:transform 2s linear';document.body.appendChild(e);requestAnimationFrame(()=>e.style.transform='translateY(110vh) rotate(600deg)');setTimeout(()=>e.remove(),2200)}}
-</script>
-</body>
-</html>
+<!doctype html><html lang="ms"><head><meta charset="utf-8"><style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font:700 15px Arial;background:#91dcff;color:#252443;touch-action:none}button,input{font:inherit}button{border:0}.hidden{display:none!important}#game{position:fixed;inset:0;width:100vw;height:100dvh}canvas{position:absolute;inset:0;width:100%!important;height:100%!important}.screen,.modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:linear-gradient(145deg,#70d5ff,#b69fff,#ffe169);padding:16px}.card,.dialog{width:min(94vw,540px);background:#fff;border:5px solid #fff;border-radius:28px;padding:24px;text-align:center;box-shadow:0 25px 75px #24205b70}.logo{font-size:58px}h1,h2{color:#6053d8;margin:5px}.card p{color:#6c6e86;line-height:1.5}.license{width:100%;padding:15px;border:3px solid #ddd9fa;border-radius:16px;text-align:center;text-transform:uppercase}.primary{width:100%;padding:15px;margin-top:12px;border-radius:16px;background:#6657df;color:#fff;font-weight:900;box-shadow:0 7px #4034a2}.error{color:#d22;min-height:20px}
+#hud{position:fixed;z-index:10;inset:14px 14px auto;display:flex;justify-content:space-between;pointer-events:none}.row{display:flex;gap:8px}.pill{background:#fffffff0;border:3px solid #fff;border-radius:18px;padding:9px 14px;box-shadow:0 5px 18px #29305630}
+#quest{position:fixed;z-index:10;top:72px;left:14px;width:min(360px,calc(100vw - 28px));background:#292744e9;color:white;padding:14px 17px;border-radius:18px}#quest b{color:#ffe65c}#bar{height:8px;background:#ffffff25;border-radius:8px;margin-top:9px;overflow:hidden}#fill{height:100%;background:#36e28e;transition:.4s}
+#talk{position:fixed;z-index:12;bottom:30px;left:50%;transform:translateX(-50%);padding:14px 22px;border-radius:20px;background:#ffda3e;font-weight:900;box-shadow:0 7px #c49c00;display:none}#hint{position:fixed;z-index:9;bottom:14px;left:14px;background:#ffffffe0;padding:8px 11px;border-radius:11px}
+#joy{display:none;position:fixed;z-index:12;left:22px;bottom:25px;width:110px;height:110px;border-radius:50%;background:#ffffff55;border:3px solid #ffffff99}#stick{position:absolute;left:29px;top:29px;width:46px;height:46px;border-radius:50%;background:#6155dfbb;border:3px solid white}
+.modal{background:#1d1a3d99;z-index:60}.dialog{max-height:92vh;overflow:auto}.face,.pic{font-size:65px}.speech{background:#efedff;border-radius:16px;padding:13px;margin:12px 0}.answers{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}.ans{padding:13px 7px;border:3px solid #e2dff4;border-radius:15px;background:#f7f6fc;font-weight:900}.result{min-height:24px;margin-top:8px}#toast{position:fixed;z-index:80;top:18px;left:50%;transform:translate(-50%,-110px);background:#262440;color:#fff;padding:13px 20px;border-radius:15px;transition:.35s}#toast.show{transform:translate(-50%,0)}
+@media(max-width:700px){#hint{display:none}#joy{display:block}#talk{left:auto;right:22px;transform:none;bottom:45px}.answers{grid-template-columns:1fr}.ans{padding:10px}#buyer{display:none}}
+</style></head><body>
+<div id="game"></div><section id="login" class="screen"><div class="card"><div class="logo">🏫🌈</div><h1>Bandar Ceria</h1><h3>Pengembaraan Bahasa Melayu</h3><p>Teroka sekolah, perpustakaan dan kedai. Selesaikan semua misi untuk menjadi Juara Bahasa!</p><input id="license" class="license" value="DEMO-BAHASA"><button id="loginBtn" class="primary">MULA BERMAIN</button><p id="err" class="error"></p></div></section>
+<div id="hud" class="hidden"><div class="row"><div class="pill">⭐ <span id="xp">0</span> XP</div><div class="pill">🪙 <span id="coin">0</span></div></div><div id="buyer" class="pill">👤 <span id="name">Pemain</span></div></div>
+<div id="quest" class="hidden"><b id="qt"></b><div id="qd"></div><div id="bar"><div id="fill"></div></div></div><button id="talk">💬 BERCAKAP</button><div id="hint" class="hidden">WASD / anak panah • E bercakap • seret skrin untuk pusing kamera</div><div id="joy" class="hidden"><div id="stick"></div></div>
+<div id="mission" class="modal hidden"><div class="dialog"><div id="face" class="face"></div><h2 id="npc"></h2><div id="speech" class="speech"></div><div id="quiz" class="hidden"><b id="count"></b><p id="prompt"></p><div id="pic" class="pic"></div><div id="answers" class="answers"></div><div id="result" class="result"></div></div><button id="go" class="primary">MULA MISI</button></div></div><div id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script><script>
+const $=x=>document.getElementById(x),M=[
+{title:'MISI 1/3 • SEKOLAH',desc:'Cari Cikgu Shafiq di hadapan sekolah.',npc:'Cikgu Shafiq',face:'👨‍🏫',intro:'Selamat datang! Mari kita cari huruf awal.',pos:[0,-14],color:0x4361c2,reward:30,q:[['Huruf awal bagi gambar ini?','🐱','K',['K','B','R']],['Huruf awal bagi gambar ini?','🍎','E',['A','E','I']],['Huruf awal bagi gambar ini?','🚌','B',['D','P','B']]]},
+{title:'MISI 2/3 • PERPUSTAKAAN',desc:'Pergi ke perpustakaan dan cari Puan Mira.',npc:'Puan Mira',face:'👩‍💼',intro:'Bantu saya menggabungkan suku kata.',pos:[17,0],color:0x816fd6,reward:45,q:[['Gabungkan suku kata.','BU + KU','BUKU',['BUKU','BAJU','BOLA']],['Gabungkan suku kata.','BA + JU','BAJU',['BATU','BAJU','BAYU']],['Gabungkan suku kata.','BO + LA','BOLA',['BOLA','BULU','BILA']]]},
+{title:'MISI 3/3 • KEDAI',desc:'Pergi ke Kedai Ceria dan cari Pak Ali.',npc:'Pak Ali',face:'👨‍🍳',intro:'Pilih perkataan yang sepadan dengan gambar.',pos:[-17,0],color:0xf07b61,reward:60,q:[['Pilih perkataan yang betul.','🥛','SUSU',['SUSU','ROTI','NASI']],['Pilih perkataan yang betul.','🍞','ROTI',['BUKU','ROTI','BAJU']],['Pilih perkataan yang betul.','🍚','NASI',['NASI','TOPI','BOLA']]]}];
+let S={token:'',xp:0,coins:0,stage:0,q:0,correct:0,near:null,busy:false},scene,camera,renderer,player,clock,yaw=0,walk=0,drag=false,lastX=0;const keys={},mv={x:0,y:0},npcs=[];
+function dev(){let x=localStorage.bc_device;if(!x){x='dev-'+crypto.randomUUID();localStorage.bc_device=x}return x}
+$('loginBtn').onclick=()=>{let b=$('loginBtn');b.disabled=true;b.textContent='MEMERIKSA...';google.script.run.withSuccessHandler(start).withFailureHandler(e=>{$('err').textContent=e.message;b.disabled=false;b.textContent='MULA BERMAIN'}).verifyLicense($('license').value,dev())};
+function start(r){if(!r.ok){$('err').textContent=r.message;$('loginBtn').disabled=false;return}S.token=r.token;S.xp=+r.progress.xp||0;S.coins=+r.progress.coins||0;S.stage=Math.min(+r.progress.stage||0,3);$('name').textContent=r.buyer;['login'].forEach(x=>$(x).classList.add('hidden'));['hud','quest','hint','joy'].forEach(x=>$(x).classList.remove('hidden'));hud();quest();init()}
+function mat(c){return new THREE.MeshStandardMaterial({color:c,roughness:.72})}function add(g,c,x,y,z){let o=new THREE.Mesh(g,mat(c));o.position.set(x,y,z);o.castShadow=o.receiveShadow=true;scene.add(o);return o}function box(w,h,d,c,x,y,z){return add(new THREE.BoxGeometry(w,h,d),c,x,y,z)}function part(w,h,d,c,x,y,z){let o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(c));o.position.set(x,y,z);o.castShadow=true;return o}
+function sprite(t,x,y,z,bg='#fff',s=1){let c=document.createElement('canvas');c.width=512;c.height=140;let q=c.getContext('2d');q.fillStyle=bg;q.roundRect(4,4,504,132,25);q.fill();q.fillStyle='#342d74';q.font='bold 48px Arial';q.textAlign='center';q.textBaseline='middle';q.fillText(t,256,72);let o=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c)}));o.position.set(x,y,z);o.scale.set(5*s,1.38*s,1);scene.add(o);return o}
+function person(shirt=0x6155df,skin=0xd99a6c){let g=new THREE.Group();g.add(part(1.05,1.05,1.05,skin,0,2.8,0),part(1.18,1.3,.7,shirt,0,1.6,0),part(1.08,.3,1.08,0x2d2018,0,3.38,0));let al=part(.32,1.2,.4,skin,-.76,1.6,0),ar=part(.32,1.2,.4,skin,.76,1.6,0),ll=part(.42,1.25,.5,0x293967,-.3,.55,0),lr=part(.42,1.25,.5,0x293967,.3,.55,0);g.add(al,ar,ll,lr);let cv=document.createElement('canvas');cv.width=cv.height=128;let c=cv.getContext('2d');c.fillStyle='#222';c.beginPath();c.arc(42,55,7,0,7);c.arc(86,55,7,0,7);c.fill();c.lineWidth=5;c.beginPath();c.arc(64,68,22,.2,2.94);c.stroke();let f=new THREE.Mesh(new THREE.PlaneGeometry(.7,.7),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cv),transparent:true}));f.position.set(0,2.76,.531);g.add(f);g.userData={legs:[ll,lr],arms:[al,ar]};return g}
+function window(x,y,z){box(1.5,1.3,.18,0xffffff,x,y,z);box(1.22,1.02,.2,0x9ce5ff,x,y,z+.02);box(.07,1.05,.23,0xffffff,x,y,z+.05)}
+function building(x,z,w,d,c,name,roof){box(w,4.2,d,c,x,2.1,z);box(w+.3,.25,d+.3,0xffffff,x,4.25,z);let r=add(new THREE.ConeGeometry(Math.max(w,d)*.71,2,4),roof,x,5.25,z);r.rotation.y=Math.PI/4;box(1.6,2.5,.22,0x72472e,x,1.25,z+d/2+.12);[-1,1].forEach(i=>window(x+i*w*.27,2.35,z+d/2+.14));box(w+2,.12,3,0xf1dab0,x,.07,z+d/2+1.5);sprite(name,x,6.6,z+d/2+.3)}
+function tree(x,z){add(new THREE.CylinderGeometry(.35,.48,3.2,9),0x88552e,x,1.6,z);add(new THREE.IcosahedronGeometry(1.55,1),0x35b95e,x,3.65,z)}function lamp(x,z){add(new THREE.CylinderGeometry(.08,.13,3,8),0x394152,x,1.5,z);add(new THREE.SphereGeometry(.25,10,8),0xffe680,x,3,z)}
+function init(){scene=new THREE.Scene();scene.background=new THREE.Color(0x91dcff);scene.fog=new THREE.Fog(0x91dcff,42,80);camera=new THREE.PerspectiveCamera(55,1,.1,120);renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;$('game').appendChild(renderer.domElement);resize();scene.add(new THREE.HemisphereLight(0xfff8e8,0x59834d,2.4));let sun=new THREE.DirectionalLight(0xfff0ce,2.8);sun.position.set(-15,25,12);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);scene.add(sun);
+box(64,.5,64,0x79ce62,0,-.28,0);box(9,.08,64,0xead9b5,0,.03,0);box(64,.08,8,0x6c7480,0,.05,9);for(let x=-28;x<29;x+=7)box(3,.04,.2,0xffffff,x,.1,9);building(0,-19,14,8,0xf2ce4b,'SEKOLAH',0xe85e66);building(18,-3,11,8,0x8b79df,'PERPUSTAKAAN',0x5849b4);building(-18,-3,11,8,0xff9071,'KEDAI CERIA',0xd65355);[[-10,-14],[10,-14],[-26,-13],[26,-13],[-12,18],[12,18],[-25,20],[25,20]].forEach(p=>tree(...p));[-7,7,-14,14].forEach(x=>lamp(x,8));
+player=person();player.position.set(0,0,15);scene.add(player);M.forEach((m,i)=>{let g=person(m.color,i==2?0xb87448:0xd99a6c);g.position.set(...[m.pos[0],0,m.pos[1]]);scene.add(g);let mark=sprite(i<=S.stage?'!':'KUNCI',m.pos[0],5,m.pos[1],i<=S.stage?'#fff19c':'#ddd',.45);npcs.push({g,mark,i})});clock=new THREE.Clock();events();loop()}
+function resize(){let w=innerWidth,h=innerHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}function events(){addEventListener('resize',resize);addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=1;if(e.key.toLowerCase()=='e')interact()});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=0);renderer.domElement.onpointerdown=e=>{if(innerWidth<700&&e.clientX<150)return;drag=true;lastX=e.clientX};addEventListener('pointermove',e=>{if(drag){yaw-=(e.clientX-lastX)*.006;lastX=e.clientX}});addEventListener('pointerup',()=>drag=false);let j=$('joy'),st=$('stick'),on=false;function set(e){let r=j.getBoundingClientRect(),x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2,l=Math.hypot(x,y),k=l>37?37/l:1;x*=k;y*=k;mv.x=x/37;mv.y=y/37;st.style.transform='translate('+x+'px,'+y+'px)'}j.onpointerdown=e=>{on=true;j.setPointerCapture(e.pointerId);set(e)};j.onpointermove=e=>{if(on)set(e)};j.onpointerup=()=>{on=false;mv.x=mv.y=0;st.style.transform=''};$('talk').onclick=interact}
+function loop(){requestAnimationFrame(loop);let dt=Math.min(clock.getDelta(),.04),x=mv.x,y=mv.y;if(keys.w||keys.arrowup)y=-1;if(keys.s||keys.arrowdown)y=1;if(keys.a||keys.arrowleft)x=-1;if(keys.d||keys.arrowright)x=1;let l=Math.hypot(x,y);if(l>.1&&!S.busy){x/=l;y/=l;let f=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw)),r=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw)),d=f.multiplyScalar(-y).add(r.multiplyScalar(x)).normalize();player.position.addScaledVector(d,7*dt);player.position.x=Math.max(-29,Math.min(29,player.position.x));player.position.z=Math.max(-29,Math.min(29,player.position.z));player.rotation.y=Math.atan2(d.x,d.z);walk+=dt*11;player.userData.legs[0].rotation.x=Math.sin(walk)*.6;player.userData.legs[1].rotation.x=-Math.sin(walk)*.6;player.userData.arms[0].rotation.x=-Math.sin(walk)*.4;player.userData.arms[1].rotation.x=Math.sin(walk)*.4}else[...player.userData.legs,...player.userData.arms].forEach(p=>p.rotation.x*=.8);let off=new THREE.Vector3(Math.sin(yaw)*9,6.2,Math.cos(yaw)*9);camera.position.lerp(player.position.clone().add(off),.09);camera.lookAt(player.position.x,1.6,player.position.z);S.near=null;let best=4.2;npcs.forEach(n=>{n.mark.position.y=5+Math.sin(performance.now()*.003+n.i)*.15;let d=player.position.distanceTo(n.g.position);if(d<best){best=d;S.near=n}});$('talk').style.display=S.near?'block':'none';$('talk').textContent=S.near&&S.near.i>S.stage?'🔒 TERKUNCI':'💬 BERCAKAP';renderer.render(scene,camera)}
+function interact(){if(!S.near||S.busy)return;if(S.near.i>S.stage){toast('Selesaikan stesen semasa dahulu.');return}if(S.near.i<S.stage){toast('Misi ini sudah selesai! ⭐');return}let m=M[S.stage];S.busy=true;S.q=S.correct=0;$('face').textContent=m.face;$('npc').textContent=m.npc;$('speech').textContent=m.intro;$('quiz').classList.add('hidden');$('go').classList.remove('hidden');$('mission').classList.remove('hidden');speak(m.intro)}
+$('go').onclick=()=>{$('go').classList.add('hidden');$('quiz').classList.remove('hidden');showQ()};function showQ(){let q=M[S.stage].q[S.q];$('count').textContent='Soalan '+(S.q+1)+' daripada 3';$('prompt').textContent=q[0];$('pic').textContent=q[1];$('result').textContent='';$('answers').innerHTML='';[...q[3]].sort(()=>Math.random()-.5).forEach(w=>{let b=document.createElement('button');b.className='ans';b.textContent=w;b.onclick=()=>answer(w,b);$('answers').appendChild(b)});speak(q[0])}
+function answer(w,b){document.querySelectorAll('.ans').forEach(x=>x.disabled=true);let q=M[S.stage].q[S.q],ok=w==q[2];if(ok){S.correct++;b.style.background='#bbf7d0';$('result').textContent='Betul! Hebat!';speak('Betul! Hebat!')}else{b.style.background='#fecaca';$('result').textContent='Jawapan yang betul ialah '+q[2];speak('Jawapan yang betul ialah '+q[2])}setTimeout(()=>{S.q++;S.q<3?showQ():finish()},1200)}
+function finish(){let m=M[S.stage],gain=m.reward+S.correct*5,coin=15+S.correct*3;S.xp+=gain;S.coins+=coin;S.stage++;hud();quest();$('quiz').innerHTML='<div class="pic">🏆</div><h2>Stesen Selesai!</h2><p>Betul '+S.correct+' daripada 3</p><h3>+'+gain+' XP &nbsp; 🪙 +'+coin+'</h3><button class="primary" onclick="closeM()">'+(S.stage<3?'BUKA STESEN SETERUSNYA':'JADI JUARA BAHASA')+'</button>';google.script.run.saveProgress(S.token,{xp:S.xp,coins:S.coins,stage:S.stage,completed:S.stage>=3,correct:S.correct});confetti();speak(S.stage<3?'Stesen seterusnya telah dibuka.':'Tahniah! Semua misi selesai.')}
+function closeM(){$('mission').classList.add('hidden');S.busy=false;toast(S.stage<3?'Stesen baharu dibuka! 🗺️':'Anda Juara Bahasa! 👑')}function hud(){$('xp').textContent=S.xp;$('coin').textContent=S.coins}function quest(){if(S.stage>=3){$('qt').textContent='SEMUA MISI SELESAI';$('qd').textContent='Tahniah! Anda Juara Bahasa.';$('fill').style.width='100%'}else{$('qt').textContent=M[S.stage].title;$('qd').textContent=M[S.stage].desc;$('fill').style.width=(S.stage/3*100)+'%'}}function speak(t){if(speechSynthesis){speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(t);u.lang='ms-MY';u.rate=.9;speechSynthesis.speak(u)}}function toast(t){$('toast').textContent=t;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2500)}function confetti(){for(let i=0;i<30;i++){let e=document.createElement('i');e.textContent=['⭐','🎉','✨'][i%3];e.style.cssText='position:fixed;z-index:90;left:'+Math.random()*100+'vw;top:-30px;font-style:normal;font-size:25px;transition:2s';document.body.appendChild(e);requestAnimationFrame(()=>e.style.transform='translateY(105vh) rotate(600deg)');setTimeout(()=>e.remove(),2100)}}
+</script></body></html>
