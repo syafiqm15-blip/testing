@@ -2,6 +2,7 @@ const CONFIG = {
   spreadsheetId: PropertiesService.getScriptProperties().getProperty('SPREADSHEET_ID') || '',
   licenseSheet: 'LESEN',
   progressSheet: 'KEMAJUAN',
+  playerSheet: 'PEMAIN',
   sessionSeconds: 21600
 };
 
@@ -28,6 +29,12 @@ function setupDatabase() {
     progress.setFrozenRows(1);
   }
   if (!progress.getRange(1,7).getValue()) progress.getRange(1,7).setValue('STESEN');
+  let players = ss.getSheetByName(CONFIG.playerSheet) || ss.insertSheet(CONFIG.playerSheet);
+  if (!players.getLastRow()) {
+    players.appendRow(['PLAYER_HASH','NAMA_PEMAIN','DEVICE_HASH','LOG_MASUK_TERAKHIR']);
+    players.getRange('A1:D1').setFontWeight('bold').setBackground('#0ea5e9').setFontColor('#fff');
+    players.setFrozenRows(1);
+  }
   return {spreadsheetUrl:ss.getUrl(), demoCode:'DEMO-BAHASA'};
 }
 
@@ -41,6 +48,34 @@ function createLicense(buyerName, deviceLimit) {
     ]);
   } finally { lock.releaseLock(); }
   return code;
+}
+
+function publicLogin(playerName, deviceId) {
+  playerName = String(playerName || '').trim().replace(/[<>]/g, '').slice(0, 40);
+  deviceId = String(deviceId || '').trim();
+  if (playerName.length < 2) return {ok:false,message:'Sila masukkan nama pemain.'};
+  if (!deviceId) return {ok:false,message:'Peranti tidak dapat dikenal pasti.'};
+
+  const deviceHash = hash_(deviceId);
+  const playerHash = hash_('PUBLIC_' + deviceId);
+  const sheet = getSheet_(CONFIG.playerSheet);
+  const values = sheet.getDataRange().getValues();
+  let rowIndex = -1;
+  for (let i=1;i<values.length;i++) {
+    if (values[i][0] === playerHash) { rowIndex=i+1; break; }
+  }
+
+  const lock = LockService.getScriptLock(); lock.waitLock(10000);
+  try {
+    const row = [playerHash, playerName, deviceHash, new Date()];
+    if (rowIndex > 0) sheet.getRange(rowIndex,1,1,4).setValues([row]);
+    else sheet.appendRow(row);
+  } finally { lock.releaseLock(); }
+
+  const token = Utilities.getUuid() + Utilities.getUuid();
+  CacheService.getScriptCache().put('SESSION_' + token,
+    JSON.stringify({licenseHash:playerHash,buyer:playerName}), CONFIG.sessionSeconds);
+  return {ok:true,token:token,buyer:playerName,progress:loadProgressByHash_(playerHash)};
 }
 
 function verifyLicense(code, deviceId) {
