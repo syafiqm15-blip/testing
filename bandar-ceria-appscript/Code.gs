@@ -23,10 +23,11 @@ function setupDatabase() {
   }
   let progress = ss.getSheetByName(CONFIG.progressSheet) || ss.insertSheet(CONFIG.progressSheet);
   if (!progress.getLastRow()) {
-    progress.appendRow(['LICENSE_HASH','XP','SYILING','MISI_SELESAI','JAWAPAN_BETUL','DIKEMAS_KINI']);
+    progress.appendRow(['LICENSE_HASH','XP','SYILING','MISI_SELESAI','JAWAPAN_BETUL','DIKEMAS_KINI','STESEN']);
     progress.getRange('A1:F1').setFontWeight('bold').setBackground('#10b981').setFontColor('#fff');
     progress.setFrozenRows(1);
   }
+  if (!progress.getRange(1,7).getValue()) progress.getRange(1,7).setValue('STESEN');
   return {spreadsheetUrl:ss.getUrl(), demoCode:'DEMO-BAHASA'};
 }
 
@@ -68,7 +69,7 @@ function verifyLicense(code, deviceId) {
 
 function saveProgress(token,payload) {
   const session=getSession_(token), data=payload||{};
-  const row=[session.licenseHash,Math.max(0,Number(data.xp)||0),Math.max(0,Number(data.coins)||0),data.completed?'YA':'TIDAK',Math.max(0,Number(data.correct)||0),new Date()];
+  const row=[session.licenseHash,Math.max(0,Number(data.xp)||0),Math.max(0,Number(data.coins)||0),data.completed?'YA':'TIDAK',Math.max(0,Number(data.correct)||0),new Date(),Math.max(0,Math.min(Number(data.stage)||0,3))];
   const sheet=getSheet_(CONFIG.progressSheet), values=sheet.getDataRange().getValues(); let rowIndex=-1;
   for(let i=1;i<values.length;i++) if(values[i][0]===session.licenseHash){rowIndex=i+1;break;}
   const lock=LockService.getScriptLock(); lock.waitLock(10000);
@@ -85,8 +86,8 @@ function getSession_(token) {
 
 function loadProgressByHash_(hash) {
   const values=getSheet_(CONFIG.progressSheet).getDataRange().getValues();
-  for(let i=1;i<values.length;i++) if(values[i][0]===hash) return {xp:Number(values[i][1])||0,coins:Number(values[i][2])||0,completed:String(values[i][3]).toUpperCase()==='YA',correct:Number(values[i][4])||0};
-  return {xp:0,coins:0,completed:false,correct:0};
+  for(let i=1;i<values.length;i++) if(values[i][0]===hash) return {xp:Number(values[i][1])||0,coins:Number(values[i][2])||0,completed:String(values[i][3]).toUpperCase()==='YA',correct:Number(values[i][4])||0,stage:Number(values[i][6])||0};
+  return {xp:0,coins:0,completed:false,correct:0,stage:0};
 }
 
 function getSheet_(name) {
